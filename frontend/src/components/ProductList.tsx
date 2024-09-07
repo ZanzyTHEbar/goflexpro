@@ -1,23 +1,27 @@
 import { For, type ParentComponent, createSignal, onMount } from 'solid-js'
 import {
+    GetProductResponseSchema,
     GetProductResponse,
-    GetProductRequest,
+    GetProductRequestSchema,
+    ProductDTOSchema,
     ProductDTO,
 } from '../static/types/gen/product/v1/product_pb.js'
 import { connectClient } from '../api/productService'
-
-interface ProductListReq extends GetProductRequest {}
+import { create } from '@bufbuild/protobuf'
 
 const ProductList: ParentComponent = () => {
     const [products, setProducts] = createSignal<ProductDTO[]>([])
 
     onMount(async () => {
-        const req = {
-            $typeName: 'product.v1.GetProductRequest',
+        const req = create(GetProductRequestSchema, {
             id: [],
-        } as GetProductRequest
+        })
 
-        const res = (await connectClient.getProduct(req)) as GetProductResponse
+        const res = create(
+            GetProductResponseSchema,
+            (await connectClient.getProduct(req)) as GetProductResponse,
+        )
+
         setProducts(res.product)
     })
 

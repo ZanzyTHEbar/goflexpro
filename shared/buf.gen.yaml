@@ -12,9 +12,9 @@ plugins:
       out: ../frontend/src/static/types/gen
       opt:
           - target=ts
-          - ts_nocheck=false
+          #- ts_nocheck=false
     - local: protoc-gen-connect-es
       out: ../frontend/src/static/types/gen
       opt:
           - target=ts
-          - ts_nocheck=false
+          #- ts_nocheck=false

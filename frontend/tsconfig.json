@@ -16,7 +16,7 @@
         "noEmit": true,
         "lib": ["DOM", "DOM.Iterable", "ESNext"],
         "allowJs": true,
-        "skipLibCheck": false,
+        "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true,
         "paths": {
