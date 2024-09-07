@@ -10,25 +10,11 @@ plugins:
           - paths=source_relative
     - local: protoc-gen-es
       out: ../frontend/src/static/types/gen
-      opt: target=ts
+      opt:
+          - target=ts
+          - ts_nocheck=false
     - local: protoc-gen-connect-es
       out: ../frontend/src/static/types/gen
-      opt: target=ts
-    #- name: go
-    #  out: ../backend/internal/domains/gen
-    #  opt: paths=source_relative
-    #- name: go-grpc
-    #  out: ../backend/internal/domains/gen
-    #  opt: paths=source_relative
-    #- name: grpc-gateway
-    #  out: ../backend/internal/domains/gen
-    #  opt:
-    #    - paths=source_relative
-    #    - generate_unbound_methods=true
-    #- name: grpc-gateway-ts
-    #  out: ../frontend/src/static/types/gen
-    #  opt:
-    #    - paths=source_relative
-    #    - generate_unbound_methods=true
-    #- plugin: buf.build/grpc-ecosystem/openapiv2:v2.16.2
-    #  out: ./api/docs
+      opt:
+          - target=ts
+          - ts_nocheck=false

@@ -14,4 +14,4 @@ const transport = createConnectTransport({
 // Set up the Connect client
 // Here we make the client itself, combining the service
 // definition with the transport.
-export const connectClient = createPromiseClient<typeof ProductService>(ProductService, transport);
+export const connectClient = createPromiseClient(ProductService, transport);
