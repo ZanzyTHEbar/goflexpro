@@ -72,7 +72,49 @@ Prisma in Go: Prisma is traditionally more popular in JavaScript/TypeScript ecos
 
 ## Quick Start
 
-## Example Project
+### Requirements
+
+- Go 1.22 or higher
+- bufbuild cli
+- protoc-gen-connect-go
+- protoc-gen-connect-es
+- protoct-gen-go
+- protoc-gen-es
+
+### Installation
+
+Clone this repository and navigate to the project directory:
+
+```bash
+git clone https://github.com/ZanzyTHEbar/goflexpro.git
+cd goflexpro
+```
+
+This project is broken into a Monorepo, with the following directories:
+
+- `backend`: Contains the Go API server.
+- `frontend`: Contains the frontend application (SolidJS).
+- `shared`: Contains shared types and schemas for the API and database layers.
+
+#### Backend
+
+Like most Go projects, this project uses Makefiles to manage the build process. To get started, run the following commands:
+
+`Generate the connect client, the db client, and push the database schema`:
+
+```bash
+make proto && make db-push
+```
+
+`Build and run the API server`:
+
+```bash
+go mod tidy && make run
+```
+
+#### Frontend
+
+#### Shared
 
 ## Contributing
 

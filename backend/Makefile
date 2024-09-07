@@ -14,18 +14,18 @@ PROTO_DIR := ../shared
 
 # Binary name
 # TODO: implement git versioning into the name
-BINARY=verdant-api
+BINARY=goflexpro-api
 
 # Build the application
 all: build
 
 build:
 	@echo "Building..."
-	#@templ generate
 	@go build -o ./bin/$(BINARY) cmd/api/main.go
 
 # Run the application
 run:
+	@echo "Running..."
 	@go run cmd/api/main.go
 
 # Create DB container

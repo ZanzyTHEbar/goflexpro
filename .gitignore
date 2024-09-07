@@ -607,3 +607,5 @@ tmp/
 
 # Project build
 main
+./bin
+*.db
