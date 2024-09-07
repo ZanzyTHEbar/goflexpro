@@ -60,6 +60,16 @@ func (ps *ProductService) GetProduct(ctx context.Context, req *connect.Request[p
 		products = append(products, product)
 	}
 
+	if len(productIDs) == 0 {
+		// no id was provided, lets return all products
+		allProducts, err := ps.productRepo.GetAll(ctx)
+		if err != nil {
+			// Handle the error
+			return nil, err
+		}
+		products = allProducts
+	}
+
 	// construct the response
 	res := connect.NewResponse(&productv1.GetProductResponse{
 		Product: products,

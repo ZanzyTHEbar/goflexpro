@@ -61,7 +61,22 @@ func (pua *PrismaProductAdapter) GetById(ctx context.Context, id int) (*productv
 
 // GetAll returns all user accounts, we don't need this for the User Service
 func (pua *PrismaProductAdapter) GetAll(ctx context.Context) ([]*productv1.ProductDTO, error) {
-	return nil, nil
+	products, err := pua.db.Product.FindMany().Exec(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get all products: %w", err)
+	}
+
+	productDTOs := make([]*productv1.ProductDTO, 0)
+	for _, product := range products {
+		productDTO, err := pua.MapUserProfileModelToProductDTO(&product)
+		if err != nil {
+			return nil, err
+		}
+
+		productDTOs = append(productDTOs, productDTO)
+	}
+
+	return productDTOs, nil
 }
 
 func (pua *PrismaProductAdapter) Update(ctx context.Context, product *productv1.ProductDTO) (*productv1.ProductDTO, error) {
