@@ -1,0 +1,76 @@
+{
+    "name": "goflexpro",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    // 👇 Use 'forwardPorts' to make a list of ports inside the container available locally.
+    // "forwardPorts": [],
+    // 👇 Use 'postCreateCommand' to run commands after the container is created.
+    "postCreateCommand": "cp ./.devcontainer/zsh_extras/.zshrc /root/.zshrc && cp -r ./.devcontainer/zsh_extras/zsh /root/zsh && chmod a+x ./.devcontainer/scripts/post-create.sh && ./.devcontainer/scripts/post-create.sh",
+    // 👇 Configure tool-specific properties.
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "doggy8088.go-extension-pack",
+                "ms-vscode.makefile-tools",
+                "streetsidesoftware.code-spell-checker",
+                "esbenp.prettier-vscode",
+                "tamasfe.even-better-toml",
+                "aaron-bond.better-comments",
+                "amirha.better-comments-2",
+                "usernamehw.errorlens",
+                "kohler.path-intellisense",
+                "streetsidesoftware.code-spell-checker",
+                "gruntfuggly.todo-tree",
+                "rangav.vscode-thunder-client",
+                "ms-azuretools.vscode-docker",
+                "yzhang.markdown-all-in-one",
+                "bierner.markdown-checkbox",
+                "bierner.markdown-emoji",
+                "bierner.markdown-footnotes",
+                "bierner.markdown-preview-github-styles",
+                "bierner.markdown-mermaid",
+                "yzane.markdown-pdf",
+                "davidanson.vscode-markdownlint",
+                "github.copilot",
+                "github.copilot-chat",
+                "github.vscode-pull-request-github",
+                "github.remotehub",
+                "eamodio.gitlens",
+                "hediet.vscode-drawio"
+            ],
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "zsh",
+                "terminal.integrated.profiles.linux": {
+                    "zsh": {
+                        "path": "/bin/zsh"
+                    }
+                }
+            }
+        }
+    },
+    "portsAttributes": {
+        "9000": {
+            "label": "API",
+            "onAutoForward": "notify"
+        }
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/node:1": {
+            "nodeGypDependencies": true,
+            "version": "latest",
+            "nvmVersion": "0.39"
+        },
+        "ghcr.io/devcontainers-contrib/features/apt-get-packages:1": {
+            "clean_ppas": true,
+            "preserve_apt_list": true,
+            "packages": ["htop", "build-essential"],
+            "ppas": "ppa:deadsnakes/ppa"
+        },
+        "ghcr.io/devcontainers-contrib/features/pnpm:2": {
+            "version": "latest"
+        }
+    },
+    // 👇 Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+    "remoteUser": "root"
+}

@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package product.v1;
+
+option go_package = "github.com/ZanzyTHEbar/goflexpro/pkgs/gen/product/v1";
+
+message ProductDTO {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+  string created_at = 5;
+}
+
+message CreateProductRequest { repeated ProductDTO product = 1; }
+
+message CreateProductResponse { repeated bool success = 1; }
+
+message GetProductRequest { repeated int32 id = 1; }
+
+message GetProductResponse { repeated ProductDTO product = 1; }
+
+message UpdateProductRequest { repeated ProductDTO product = 1; }
+
+message UpdateProductResponse { repeated bool success = 1; }
+
+message DeleteProductRequest { repeated int32 id = 1; }
+
+message DeleteProductResponse { repeated bool success = 1; }
+
+service ProductService {
+  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse);
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse);
+  rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse);
+  rpc DeleteProduct(DeleteProductRequest) returns (DeleteProductResponse);
+}
