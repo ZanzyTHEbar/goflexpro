@@ -13,9 +13,6 @@
   "devDependencies": {
     "@types/node": "^22.5.4",
     "solid-devtools": "^0.29.2",
-    "@bufbuild/protoc-gen-es": "^1.10.0",
-    "@bufbuild/buf": "^1.39.0",
-    "@connectrpc/protoc-gen-connect-es": "^1.4.0",
     "typescript": "^5.5.4",
     "vite": "^5.4.3",
     "vite-plugin-solid": "^2.10.2"

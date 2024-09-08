@@ -12,11 +12,11 @@
         "types": ["vite/client"],
         "useDefineForClassFields": true,
         "noImplicitAny": false,
-        "isolatedModules": true,
+        "isolatedModules": false,
         "noEmit": true,
         "lib": ["DOM", "DOM.Iterable", "ESNext"],
         "allowJs": true,
-        "skipLibCheck": true,
+        "skipLibCheck": false,
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true,
         "paths": {
@@ -33,11 +33,6 @@
             "@utils/*": ["src/utils/*"]
         }
     },
-    "include": ["src", "**/*.ts", "**/*.tsx", "index.js"],
-    "references": [
-        {
-            "path": "./tsconfig.node.json"
-        }
-    ],
+    "include": ["src", "**/*.ts", "**/*.tsx"],
     "exclude": ["node_modules"]
 }
