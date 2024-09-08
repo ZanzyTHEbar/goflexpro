@@ -1,7 +1,6 @@
 import { createPromiseClient } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-web";
-import { ProductService } from "../static/types/gen/product/v1/product_connect";
-
+import { ProductService } from "@static/types/gen/product/v1/product_connect";
 
 // The transport defines what type of endpoint we're hitting.
 // In our example we'll be communicating with a Connect endpoint.

@@ -1,10 +1,6 @@
 import { For, type ParentComponent, createSignal, onMount } from 'solid-js'
-import {
-    GetProductResponse,
-    GetProductRequest,
-    ProductDTO,
-} from '../static/types/gen/product/v1/product_pb.js'
-import { connectClient } from '../api/productService'
+import { GetProductRequest, ProductDTO } from '@static/types/gen/product/v1/product_pb'
+import { connectClient } from '@src/api/productService'
 
 const ProductList: ParentComponent = () => {
     const [products, setProducts] = createSignal<ProductDTO[]>([])
@@ -28,6 +24,7 @@ const ProductList: ParentComponent = () => {
                         <li>
                             <h2>{product.name}</h2>
                             <p>{product.description}</p>
+                            <p>{product.price}</p>
                         </li>
                     )}
                 </For>

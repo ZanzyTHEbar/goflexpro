@@ -1,8 +1,8 @@
 import type { Component } from 'solid-js'
 
 import { Route, Router } from '@solidjs/router'
-import ProductList from './components/ProductList'
-import CreateProduct from './components/CreateProduct'
+import ProductList from '@components/ProductList'
+import CreateProduct from '@components/CreateProduct'
 
 const App: Component = () => {
     return (

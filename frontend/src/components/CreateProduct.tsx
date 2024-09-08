@@ -1,6 +1,6 @@
 import { type ParentComponent, createEffect, createSignal } from 'solid-js'
-import { CreateProductRequest, ProductDTO } from '../static/types/gen/product/v1/product_pb.js'
-import { connectClient } from '../api/productService'
+import { CreateProductRequest, ProductDTO } from '@static/types/gen/product/v1/product_pb'
+import { connectClient } from '@src/api/productService'
 
 const CreateProduct: ParentComponent = () => {
     const [product, setProduct] = createSignal<ProductDTO>()
