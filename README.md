@@ -24,9 +24,9 @@ This stack eliminates the need for glue code and boilerplate, letting you focus 
 
 GoFlexPro is designed to be a robust, scalable, and maintainable stack for Go applications. To achieve this, I have made some key design decisions to aid in scalability, performance, and developer productivity:
 
-**Go**: Go is a perfect choice for building scalable, performant backend systems. It's known for its simplicity, speed, and concurrency support. By using Go, you’re already setting a solid foundation for performance and scalability.
+**Go**: Go is a perfect choice for building scalable, performant backend systems. It's known for its simplicity, speed, and concurrency support. By using Go, you're already setting a solid foundation for performance and scalability.
 
-[**Prisma-Client-Go**](https://goprisma.org/docs): Prisma is a powerful ORM with a strong emphasis on developer experience, type safety, and performance. Prisma’s ability to generate schema-based, type-safe clients is a huge plus, especially in reducing errors and improving productivity. It also brings multi-database support, which gives your stack flexibility in working across different database systems. The recent development of `Prisma-Client-Go` for the Go ecosystem is a welcome addition, making it easier to integrate Prisma into Go projects.
+[**Prisma-Client-Go**](https://goprisma.org/docs): Prisma is a powerful ORM with a strong emphasis on developer experience, type safety, and performance. Prisma's ability to generate schema-based, type-safe clients is a huge plus, especially in reducing errors and improving productivity. It also brings multi-database support, which gives your stack flexibility in working across different database systems. The recent development of `Prisma-Client-Go` for the Go ecosystem is a welcome addition, making it easier to integrate Prisma into Go projects.
 
 **BufBuild-[`Connect RPC`](https://connectrpc.com/) & [`BufBuild-Buf`](https://buf.build/docs/installation)**: Schema-driven generation of type-compliant clients and services. Leveraging gRPC and HTTP simultaneously makes the stack highly flexible for communication protocols. Using BufBuild-Buf to automate the protoc workflow is a nice touch for DX, minimizing setup hassles while maintaining a strict contract-first approach. This protocol flexibility allows for a future-proof system that can evolve easily.
 
@@ -58,9 +58,9 @@ GoFlexPro is designed to be a robust, scalable, and maintainable stack for Go ap
 
 ### Business Perspective
 
-**Professional**: The “pro” in GoFlexPro is not just in the name—it’s embedded in the stack's design. GoFlexPro is a serious, production-grade setup that prioritizes long-term maintainability and performance. There’s a level of intentionality here, especially with the type-safe and schema-driven approach, that speaks to a professional mindset.
+**Professional**: The "pro" in GoFlexPro is not just in the name—it's embedded in the stack's design. GoFlexPro is a serious, production-grade setup that prioritizes long-term maintainability and performance. There's a level of intentionality here, especially with the type-safe and schema-driven approach, that speaks to a professional mindset.
 
-**Balance of Flexibility and Efficiency**: This stack achieves a very solid balance between flexibility and raw performance. `Connect`'s dual support for gRPC and HTTP and Prisma’s multi-database compatibility give you options without sacrificing speed.
+**Balance of Flexibility and Efficiency**: This stack achieves a very solid balance between flexibility and raw performance. `Connect`'s dual support for gRPC and HTTP and Prisma's multi-database compatibility give you options without sacrificing speed.
 
 **Modern and Future-Proof**: We are using modern tools, built on well-tested industry accepted practices and protocols, that are both powerful and scalable. BufBuild is increasingly becoming a standard for Protobuf management, and Prisma has a strong track record of community support and updates. This ensures GoFlexPro will continue to evolve with the industry, rather than becoming obsolete.
 
@@ -88,11 +88,17 @@ We need the typescript dependancies to be on the path, so we will install them g
 pnpm setup
 ```
 
-> [!NOTE]\
-> You can install the `bufbuild/buf` cli and the `bufbuild/protobuf` cli via the go packages if you wish.
+`frontend` dependancies:
 
 ```bash
-pnpm i -g @bufbuild/protoc-gen-es@^1.10.0 @bufbuild/buf@^1.39.0 @bufbuild/protobuf@^2.0.0 @connectrpc/protoc-gen-connect-es@^1.4.0
+pnpm i -g @bufbuild/protoc-gen-es@^1.10.0 @bufbuild/buf@^1.39.0 @connectrpc/protoc-gen-connect-es@^1.4.0
+```
+
+`backend` dependancies:
+
+```bash
+go install github.com/connectrpc/connect-go
+go install github.com/golang/protobuf
 ```
 
 ### Installation
@@ -117,18 +123,34 @@ Like most Go projects, this project uses Makefiles to manage the build process. 
 `Generate the connect client, the db client, and push the database schema`:
 
 ```bash
-make proto && make db-push
+go mod tidy && make proto && make db-push
 ```
 
 `Build and run the API server`:
 
 ```bash
-go mod tidy && make run
+make run
 ```
 
 #### Frontend
 
+The frontend is a SolidJS application that communicates with the Go API server. To get started, run the following commands:
+
+`Install the frontend dependancies`:
+
+```bash
+pnpm i
+```
+
+`Run the frontend application`:
+
+```bash
+pnpm dev
+```
+
 #### Shared
+
+The shared directory contains the shared types and schemas for the API.
 
 ## Contributing
 
