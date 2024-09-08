@@ -81,6 +81,20 @@ Prisma in Go: Prisma is traditionally more popular in JavaScript/TypeScript ecos
 - protoct-gen-go
 - protoc-gen-es
 
+We need the typescript dependancies to be on the path, so we will install them globally.
+
+```bash
+# Run if you have not yet setup your pnpm environment
+pnpm setup
+```
+
+> [!NOTE]\
+> You can install the `bufbuild/buf` cli and the `bufbuild/protobuf` cli via the go packages if you wish.
+
+```bash
+pnpm i -g @bufbuild/protoc-gen-es@^1.10.0 @bufbuild/buf@^1.39.0 @bufbuild/protobuf@^2.0.0 @connectrpc/protoc-gen-connect-es@^1.4.0
+```
+
 ### Installation
 
 Clone this repository and navigate to the project directory:
