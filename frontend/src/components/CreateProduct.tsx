@@ -3,7 +3,6 @@ import { CreateProductRequest, ProductDTO } from '@static/types/gen/product/v1/p
 import { connectClient } from '@src/api/productService'
 
 const CreateProduct: ParentComponent = () => {
-    const [product, setProduct] = createSignal<ProductDTO>()
     const [name, setName] = createSignal('')
     const [description, setDescription] = createSignal('')
     const [price, setPrice] = createSignal(0)
@@ -27,33 +26,37 @@ const CreateProduct: ParentComponent = () => {
     const onSubmit = async (e: Event) => {
         e.preventDefault()
 
-        const req = new CreateProductRequest({
-            product: [product()!],
+        const newProduct: ProductDTO = new ProductDTO({
+            name: name(),
+            description: description(),
+            price: price(),
         })
 
-        await connectClient.createProduct(req)
-    }
+        const req = new CreateProductRequest({
+            product: [newProduct],
+        })
 
-    createEffect(() => {
-        const newProduct: ProductDTO = new ProductDTO()
-        setProduct(newProduct)
-    })
+        console.log('req', req)
+
+        const res = await connectClient.createProduct(req)
+        console.log('res', res)
+    }
 
     return (
         <form onSubmit={onSubmit}>
             <div>
                 <label>Name:</label>
-                <input value={name()} onInput={onChange} />
+                <input name="name" value={name()} onInput={onChange} />
             </div>
             <br />
             <div>
                 <label>Description:</label>
-                <input value={description()} onInput={onChange} />
+                <input name="description" value={description()} onInput={onChange} />
             </div>
             <br />
             <div>
                 <label>Price:</label>
-                <input value={price()} type="number" onInput={onChange} />
+                <input name="price" value={price()} type="number" onInput={onChange} />
             </div>
             <br />
             <button type="submit">CreateProduct</button>

@@ -39,7 +39,7 @@ func (pua *PrismaProductAdapter) Create(ctx context.Context, product *productv1.
 		return nil, fmt.Errorf("failed to create productModel: %w", err)
 	}
 
-	slog.Info("event", "addUser", "productModel created successfully")
+	slog.Info("Create", "event", "dbCreate", "details", "productModel created successfully")
 
 	return product, nil
 }
@@ -48,33 +48,41 @@ func (pua *PrismaProductAdapter) GetById(ctx context.Context, id int) (*productv
 	lookupKey := db.Product.ID.Equals(id)
 	productModel, err := pua.ValidateProduct(ctx, lookupKey)
 	if err != nil {
+		slog.Error("GetById", "error", err)
 		return nil, err
 	}
 
-	productDTO, err := pua.MapUserProfileModelToProductDTO(productModel)
+	productDTO, err := pua.MapproductProfileModelToProductDTO(productModel)
 	if err != nil {
+		slog.Error("GetById", "error", err)
 		return nil, err
 	}
+
+	slog.Info("GetById", "event", "dbGet", "details", "productModel retrieved successfully")
 
 	return productDTO, nil
 }
 
-// GetAll returns all user accounts, we don't need this for the User Service
+// GetAll returns all product accounts, we don't need this for the product Service
 func (pua *PrismaProductAdapter) GetAll(ctx context.Context) ([]*productv1.ProductDTO, error) {
 	products, err := pua.db.Product.FindMany().Exec(ctx)
 	if err != nil {
+		slog.Error("GetAll", "error", err)
 		return nil, fmt.Errorf("failed to get all products: %w", err)
 	}
 
 	productDTOs := make([]*productv1.ProductDTO, 0)
 	for _, product := range products {
-		productDTO, err := pua.MapUserProfileModelToProductDTO(&product)
+		productDTO, err := pua.MapproductProfileModelToProductDTO(&product)
 		if err != nil {
+			slog.Error("GetAll", "error", err)
 			return nil, err
 		}
 
 		productDTOs = append(productDTOs, productDTO)
 	}
+
+	slog.Info("GetAll", "event", "dbGetAll", "details", "products retrieved successfully")
 
 	return productDTOs, nil
 }
@@ -83,6 +91,7 @@ func (pua *PrismaProductAdapter) Update(ctx context.Context, product *productv1.
 	lookupKey := db.Product.ID.Equals(int(product.GetId()))
 	_, err := pua.ValidateProduct(ctx, lookupKey)
 	if err != nil {
+		slog.Error("Update", "error", err)
 		return nil, err
 	}
 
@@ -95,8 +104,11 @@ func (pua *PrismaProductAdapter) Update(ctx context.Context, product *productv1.
 	).Exec(ctx)
 
 	if err != nil || productModel == nil {
+		slog.Error("Update", "error", err)
 		return nil, fmt.Errorf("failed to update account: %w", err)
 	}
+
+	slog.Info("Update", "event", "dbUpdate", "details", "productModel updated successfully")
 
 	return product, nil
 }
@@ -105,6 +117,7 @@ func (pua *PrismaProductAdapter) Delete(ctx context.Context, id int) error {
 	lookupKey := db.Product.ID.Equals(id)
 	_, err := pua.ValidateProduct(ctx, lookupKey)
 	if err != nil {
+		slog.Error("Delete", "error", err)
 		return err
 	}
 
@@ -113,29 +126,38 @@ func (pua *PrismaProductAdapter) Delete(ctx context.Context, id int) error {
 	).Delete().Exec(ctx)
 
 	if err != nil {
+		slog.Error("Delete", "error", err)
 		return fmt.Errorf("failed to delete account: %w", err)
 	}
+
+	slog.Info("Delete", "event", "dbDelete", "details", "productModel deleted successfully")
 
 	return nil
 }
 
-// ValidateProduct checks if a user exists by their ID. Returns the user if found.
+// ValidateProduct checks if a product exists by their ID. Returns the product if found.
 func (pua *PrismaProductAdapter) ValidateProduct(ctx context.Context, key db.ProductEqualsUniqueWhereParam) (*db.ProductModel, error) {
-	user, err := pua.db.Product.FindUnique(
+	product, err := pua.db.Product.FindUnique(
 		key,
 	).Exec(ctx)
 
-	if err != nil || user == nil {
-		return nil, fmt.Errorf("failed to validate user: %w", err)
+	if err != nil || product == nil {
+		slog.Error("ValidateProduct", "error", err)
+		return nil, fmt.Errorf("failed to validate product: %w", err)
 	}
 
-	return user, nil
+	slog.Debug("ValidateProduct", "event", "dbValidate", "details", "productModel validated successfully")
+
+	return product, nil
 }
 
-func (pua *PrismaProductAdapter) MapUserProfileModelToProductDTO(productModel *db.ProductModel) (*productv1.ProductDTO, error) {
+func (pua *PrismaProductAdapter) MapproductProfileModelToProductDTO(productModel *db.ProductModel) (*productv1.ProductDTO, error) {
 	if productModel == nil {
+		slog.Error("MapproductProfileModelToProductDTO", "error", errsx.NotFoundErr(errors.New("product not found")))
 		return nil, errsx.NotFoundErr(errors.New("product not found"))
 	}
+
+	slog.Debug("MapproductProfileModelToProductDTO", "event", "dbMap", "details", "productModel mapped successfully")
 
 	return &productv1.ProductDTO{
 		Id:          int32(productModel.ID),
@@ -145,7 +167,10 @@ func (pua *PrismaProductAdapter) MapUserProfileModelToProductDTO(productModel *d
 	}, nil
 }
 
-func (pua *PrismaProductAdapter) MapProductDTOToUserProfilesModel(product *productv1.ProductDTO) (*db.ProductModel, error) {
+func (pua *PrismaProductAdapter) MapProductDTOToproductProfilesModel(product *productv1.ProductDTO) (*db.ProductModel, error) {
+
+	slog.Debug("MapProductDTOToproductProfilesModel", "event", "dbMap", "details", "productModel mapped successfully")
+
 	return &db.ProductModel{
 		InnerProduct: db.InnerProduct{
 			ID:          int(product.GetId()),

@@ -23,6 +23,7 @@ func InitLogger(config config.Config) {
 	var handler slog.Handler
 
 	logLevel, ok := loggerLevels[string(config.Logger.Level)]
+	log.Debugf("Log Level Set to %v, with: %v", config.Logger.Level, logLevel)
 
 	if !ok {
 		log.Debugf("Invalid log level: %s, Using default value INFO", config.Logger.Level)

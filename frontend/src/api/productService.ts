@@ -7,7 +7,7 @@ import { ProductService } from "@static/types/gen/product/v1/product_connect";
 // If your endpoint only supports gRPC-web, make sure to use
 // `createGrpcWebTransport` instead.
 const transport = createConnectTransport({
-    baseUrl: "http://localhost:9000",
+    baseUrl: "http://localhost:9090",
 });
 
 // Set up the Connect client

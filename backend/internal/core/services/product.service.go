@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"log/slog"
 
 	"connectrpc.com/connect"
 	"github.com/ZanzyTHEbar/goflexpro/internal/ports"
@@ -24,11 +25,18 @@ func (ps *ProductService) CreateProduct(ctx context.Context, req *connect.Reques
 
 	// req.Msg.GetProduct() returns a slice of pointers to ProductDTO
 	newProducts := req.Msg.GetProduct()
+
+	slog.Debug("Creating products", "products", newProducts)
+
 	success := make([]bool, 0)
 
 	for _, product := range newProducts {
 		_, err := ps.productRepo.Create(ctx, product)
 		if err != nil {
+
+			// Handle the error
+			slog.Debug("Error creating product", "error", err)
+
 			success = append(success, false)
 			continue
 		}

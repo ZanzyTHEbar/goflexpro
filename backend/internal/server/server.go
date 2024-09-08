@@ -1,27 +1,22 @@
 package server
 
 import (
-	"context"
-	"errors"
 	"fmt"
 	"log"
 	"log/slog"
-	"net"
 	"net/http"
-	"os/signal"
-	"syscall"
-	"time"
 
-	_ "github.com/jpfuentes2/go-env/autoload"
-	"golang.org/x/net/http2"
-	"golang.org/x/net/http2/h2c"
-
+	connectcors "connectrpc.com/cors"
 	"github.com/ZanzyTHEbar/goflexpro/internal/adapters/secondary/persistence"
 	"github.com/ZanzyTHEbar/goflexpro/internal/core/services"
 	"github.com/ZanzyTHEbar/goflexpro/internal/dto/db"
 	"github.com/ZanzyTHEbar/goflexpro/pkgs/config"
 	productv1connect "github.com/ZanzyTHEbar/goflexpro/pkgs/gen/product/v1/v1connect"
 	goflexprologger "github.com/ZanzyTHEbar/goflexpro/pkgs/logger"
+	_ "github.com/jpfuentes2/go-env/autoload"
+	"github.com/rs/cors"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 )
 
 type Server struct {
@@ -49,7 +44,7 @@ func (server *Server) Start() {
 
 	mux := http.NewServeMux()
 
-	// TODO: Register services here
+	// Register services here
 	// We will need to instantiate and add the various services, etc.
 	productService := services.NewProductService(productRepo)
 
@@ -59,43 +54,65 @@ func (server *Server) Start() {
 	// Register handlers
 	mux.Handle(productPath, productHandler)
 
+	// Add CORS middleware
+	corsHandler := withCORS(mux)
+
+	slog.Info("Starting server", "addr", fmt.Sprintf(":%d", server.config.HttpPort))
+
+	http.ListenAndServe(
+		fmt.Sprintf(":%d", server.config.HttpPort),
+		// Use h2c so we can serve HTTP/2 without TLS.
+		h2c.NewHandler(corsHandler, &http2.Server{}),
+	)
+
 	// Create a new listener
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", server.config.HttpPort))
-	if err != nil {
-		slog.Error("Failed to create listener", "error", err)
-		return
-	}
+	//listener, err := net.Listen("tcp", fmt.Sprintf(":%d", server.config.HttpPort))
+	//if err != nil {
+	//	slog.Error("Failed to create listener", "error", err)
+	//	return
+	//}
 
 	// Create a new signal.NotifyContext to handle graceful shutdown
-	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	defer stop()
+	//ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	//defer stop()
+	//
+	//// Start the server in a goroutine so that it doesn't block
+	//go func() {
+	//	slog.Info("Starting server", "addr", listener.Addr().String())
+	//
+	//	if err := http.Serve(
+	//		listener,
+	//		h2c.NewHandler(corsHandler, &http2.Server{}),
+	//	); err != nil && !errors.Is(err, http.ErrServerClosed) {
+	//		slog.Error("Server failed to start", "error", err)
+	//	}
+	//}()
 
-	// Start the server in a goroutine so that it doesn't block
-	go func() {
-		slog.Info("Starting server", "addr", listener.Addr().String())
+	//<-ctx.Done()
+	//
+	//_, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	//defer cancel()
+	//
+	//slog.Info("Shutting down server")
+	//
+	//if err := listener.Close(); err != nil {
+	//	slog.Error("Failed to close listener", "error", err)
+	//}
+	//
+	//if err := server.db.Prisma.Disconnect(); err != nil {
+	//	slog.Error("Failed to disconnect from database", "error", err)
+	//}
+	//
+	//slog.Info("Server shutdown complete")
+}
 
-		if err := http.Serve(
-			listener,
-			h2c.NewHandler(mux, &http2.Server{}),
-		); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			slog.Error("Server failed to start", "error", err)
-		}
-	}()
-
-	<-ctx.Done()
-
-	_, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	slog.Info("Shutting down server")
-
-	if err := listener.Close(); err != nil {
-		slog.Error("Failed to close listener", "error", err)
-	}
-
-	if err := server.db.Prisma.Disconnect(); err != nil {
-		slog.Error("Failed to disconnect from database", "error", err)
-	}
-
-	slog.Info("Server shutdown complete")
+// withCORS adds CORS support to a Connect HTTP handler.
+func withCORS(h http.Handler) http.Handler {
+	middleware := cors.New(cors.Options{
+		AllowedOrigins: []string{"http://localhost:3000"},
+		AllowedMethods: connectcors.AllowedMethods(),
+		AllowedHeaders: connectcors.AllowedHeaders(),
+		ExposedHeaders: connectcors.ExposedHeaders(),
+	})
+	return middleware.Handler(h)
 }

@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -43,14 +44,18 @@ const ConfigFileName = "goflexpro"
 func NewConfig(path *string, encryptionKey *string) (Config, error) {
 	cfg := viper.New()
 
-	cfg.SetConfigName(ConfigFileName) // name of config file (without extension)
-	cfg.SetConfigType("toml")         // REQUIRED if the config file does not have the extension in the name
+	cfg.SetConfigName(fmt.Sprintf(".%s", ConfigFileName)) // name of config file (without extension)
+	//cfg.SetConfigType("toml")         // REQUIRED if the config file does not have the extension in the name
+
+	var defaultConfigPath = filepath.Join(os.Getenv("HOME"), ".config", ConfigFileName)
 
 	if path != nil {
 		cfg.SetConfigFile(*path)
 	} else {
-		cfg.AddConfigPath(fmt.Sprintf("/etc/%s", ConfigFileName))          // look for config in the home directory
-		cfg.AddConfigPath(fmt.Sprintf("$HOME/.config/%s", ConfigFileName)) // look for config in the home directory
+		log.Printf("Config file not provided. Looking for config file in default locations\n")
+		cfg.AddConfigPath(filepath.Join("/etc", ConfigFileName)) // look for config in the home directory
+		cfg.AddConfigPath(defaultConfigPath)                     // look for config in the home directory
+		log.Printf("%s", defaultConfigPath)
 		cfg.AddConfigPath(".")
 	}
 
@@ -59,10 +64,9 @@ func NewConfig(path *string, encryptionKey *string) (Config, error) {
 	if err := cfg.ReadInConfig(); err != nil {
 		// Create a default config file if it doesn't exist
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-
 			// set the default config file location
 
-			defaultConfigPath := filepath.Join(os.Getenv("HOME"), ".config", ConfigFileName, fmt.Sprintf(".%s.toml", ConfigFileName))
+			defaultConfigPath = filepath.Join(defaultConfigPath, fmt.Sprintf(".%s.toml", ConfigFileName))
 
 			cfg.SetConfigFile(defaultConfigPath)
 
@@ -75,8 +79,10 @@ func NewConfig(path *string, encryptionKey *string) (Config, error) {
 
 			// set the default values in viper
 
+			cfg.Set("logger.style", defaultConfig.Logger.Style)
+			cfg.Set("logger.level", defaultConfig.Logger.Level)
 			cfg.Set("cache_dir", defaultConfig.CacheDir)
-			cfg.Set("logger", defaultConfig.Logger)
+			cfg.Set("http_port", defaultConfig.HttpPort)
 
 			// print the contents of viper
 			slog.Warn(fmt.Sprintf("Config: %v", cfg.AllSettings()))
@@ -127,6 +133,7 @@ func (c *Config) SaveConfig(config *Config, filePath string) error {
 	c.cfg.Set("logger.style", config.Logger.Style)
 	c.cfg.Set("logger.level", config.Logger.Level)
 	c.cfg.Set("cache_dir", config.CacheDir)
+	c.cfg.Set("http_port", config.HttpPort)
 
 	if err := c.cfg.WriteConfig(); err != nil {
 		return err
@@ -138,10 +145,10 @@ func (c *Config) SaveConfig(config *Config, filePath string) error {
 // Returns the default configuration
 func getDefaultConfig() Config {
 	return Config{
-		HttpPort: 9000,
+		HttpPort: 9090,
 		DBHost:   "localhost",
 		DBPort:   5432,
-		DBName:   "verdant",
+		DBName:   "goflexpro",
 		Logger: Logger{
 			Style: "json",
 			Level: DebugLevelInfo,
