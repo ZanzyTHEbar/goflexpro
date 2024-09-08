@@ -1,10 +1,15 @@
 package server
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	connectcors "connectrpc.com/cors"
 	"github.com/ZanzyTHEbar/goflexpro/internal/adapters/secondary/persistence"
@@ -25,6 +30,15 @@ type Server struct {
 }
 
 func NewServer(config config.Config) *Server {
+
+	// Handle the location of the db_url
+	err := os.Setenv("DATABASE_URL", config.DBHost)
+	log.Printf("Config: %s", config.DBHost)
+
+	log.Printf("DATABASE_URL: %s", os.Getenv("DATABASE_URL"))
+	if err != nil {
+		slog.Error("Failed to set DATABASE_URL", "error", err)
+	}
 
 	dbClient := db.NewClient()
 	if err := dbClient.Prisma.Connect(); err != nil {
@@ -73,8 +87,8 @@ func (server *Server) Start() {
 	//}
 
 	// Create a new signal.NotifyContext to handle graceful shutdown
-	//ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	//defer stop()
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
 	//
 	//// Start the server in a goroutine so that it doesn't block
 	//go func() {
@@ -88,22 +102,18 @@ func (server *Server) Start() {
 	//	}
 	//}()
 
-	//<-ctx.Done()
-	//
-	//_, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	//defer cancel()
-	//
-	//slog.Info("Shutting down server")
-	//
-	//if err := listener.Close(); err != nil {
-	//	slog.Error("Failed to close listener", "error", err)
-	//}
-	//
-	//if err := server.db.Prisma.Disconnect(); err != nil {
-	//	slog.Error("Failed to disconnect from database", "error", err)
-	//}
-	//
-	//slog.Info("Server shutdown complete")
+	<-ctx.Done()
+
+	_, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	slog.Info("Shutting down server")
+
+	if err := server.db.Prisma.Disconnect(); err != nil {
+		slog.Error("Failed to disconnect from database", "error", err)
+	}
+
+	slog.Info("Server shutdown complete")
 }
 
 // withCORS adds CORS support to a Connect HTTP handler.

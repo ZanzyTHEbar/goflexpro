@@ -78,11 +78,7 @@ func NewConfig(path *string, encryptionKey *string) (Config, error) {
 			slog.Debug(fmt.Sprintf("Default Config: %v", defaultConfig))
 
 			// set the default values in viper
-
-			cfg.Set("logger.style", defaultConfig.Logger.Style)
-			cfg.Set("logger.level", defaultConfig.Logger.Level)
-			cfg.Set("cache_dir", defaultConfig.CacheDir)
-			cfg.Set("http_port", defaultConfig.HttpPort)
+			setConfig(&defaultConfig, cfg)
 
 			// print the contents of viper
 			slog.Warn(fmt.Sprintf("Config: %v", cfg.AllSettings()))
@@ -129,12 +125,7 @@ func NewConfig(path *string, encryptionKey *string) (Config, error) {
 }
 
 func (c *Config) SaveConfig(config *Config, filePath string) error {
-
-	c.cfg.Set("logger.style", config.Logger.Style)
-	c.cfg.Set("logger.level", config.Logger.Level)
-	c.cfg.Set("cache_dir", config.CacheDir)
-	c.cfg.Set("http_port", config.HttpPort)
-
+	setConfig(config, c.cfg)
 	if err := c.cfg.WriteConfig(); err != nil {
 		return err
 	}
@@ -142,16 +133,40 @@ func (c *Config) SaveConfig(config *Config, filePath string) error {
 	return nil
 }
 
+func (c *Config) GetConfig() Config {
+	return *c
+}
+
+// HttpPort      int    `mapstructure:"http_port"`
+// DBHost        string `mapstructure:"db_host"`
+// DBPort        int    `mapstructure:"db_port"`
+// DBName        string `mapstructure:"db_name"`
+// DBUser        string `mapstructure:"db_user"`
+// CacheDir      string `mapstructure:"cache_dir"`
+// SessionSecret string `mapstructure:"session_secret"`
+// Logger        Logger `mapstructure:"logger"`
+func setConfig(config *Config, c *viper.Viper) {
+	c.Set("db_host", config.DBHost)
+	c.Set("http_port", config.HttpPort)
+	c.Set("db_port", config.DBPort)
+	c.Set("db_name", config.DBName)
+	c.Set("db_user", config.DBUser)
+	c.Set("cache_dir", config.CacheDir)
+	c.Set("logger.style", config.Logger.Style)
+	c.Set("logger.level", config.Logger.Level)
+	c.Set("session_secret", config.SessionSecret)
+}
+
 // Returns the default configuration
 func getDefaultConfig() Config {
 	return Config{
 		HttpPort: 9090,
-		DBHost:   "localhost",
+		DBHost:   "file:///tmp/goflexpro.db",
 		DBPort:   5432,
 		DBName:   "goflexpro",
 		Logger: Logger{
-			Style: "json",
-			Level: DebugLevelInfo,
+			Style: "text",
+			Level: DebugLevelDebug,
 		},
 		SessionSecret: "vxwby2Qwtswp6z2z",
 		CacheDir:      ".cache",
