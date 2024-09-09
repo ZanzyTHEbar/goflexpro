@@ -28,24 +28,6 @@ run:
 	@echo "Running..."
 	@go run cmd/api/main.go
 
-# Create DB container
-docker-run:
-	@if docker compose up 2>/dev/null; then \
-		: ; \
-	else \
-		echo "Falling back to Docker Compose V1"; \
-		docker-compose up; \
-	fi
-
-# Shutdown DB container
-docker-down:
-	@if docker compose down 2>/dev/null; then \
-		: ; \
-	else \
-		echo "Falling back to Docker Compose V1"; \
-		docker-compose down; \
-	fi
-
 # Test the application
 test:
 	@echo "Testing..."
@@ -108,9 +90,6 @@ prisma-client:
 	@echo "Prisma base cmd is ..."
 	@echo $(PRISMA_CLIENT)
 
-stripe:
-	@stripe listen --forward-to http://localhost:3000/stripe/webhook
-
 # Live Reload
 dev:
 	@if command -v air > /dev/null; then \
@@ -139,15 +118,13 @@ help:
 	@echo "  clean           Clean the binary"
 	@echo "  proto           Generate proto files"
 	@echo "  del-proto-gen   Delete generated proto files"
-	@echo "  templ           Generate templates"
 	@echo "  db-mig          Run db migrations"
 	@echo "  db-push         Run db push"
 	@echo "  db-gen          Run db client generation"
-	@echo "  stripe          Run stripe webhook"
 	@echo "  dev             Live reload"
 	@echo "  help            Show this help message"
 
 %:
 	@:
 
-.PHONY: all build run test clean proto templ db-mig db-push db-gen stripe dev help
+.PHONY: all build run test clean proto db-mig db-push db-gen dev help
