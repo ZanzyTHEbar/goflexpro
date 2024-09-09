@@ -79,28 +79,9 @@ func (server *Server) Start() {
 		h2c.NewHandler(corsHandler, &http2.Server{}),
 	)
 
-	// Create a new listener
-	//listener, err := net.Listen("tcp", fmt.Sprintf(":%d", server.config.HttpPort))
-	//if err != nil {
-	//	slog.Error("Failed to create listener", "error", err)
-	//	return
-	//}
-
 	// Create a new signal.NotifyContext to handle graceful shutdown
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
-	//
-	//// Start the server in a goroutine so that it doesn't block
-	//go func() {
-	//	slog.Info("Starting server", "addr", listener.Addr().String())
-	//
-	//	if err := http.Serve(
-	//		listener,
-	//		h2c.NewHandler(corsHandler, &http2.Server{}),
-	//	); err != nil && !errors.Is(err, http.ErrServerClosed) {
-	//		slog.Error("Server failed to start", "error", err)
-	//	}
-	//}()
 
 	<-ctx.Done()
 

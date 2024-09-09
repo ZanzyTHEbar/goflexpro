@@ -39,28 +39,28 @@ import "connectrpc.com/connect"
 //			return c.SendStatus(http.StatusOK)
 //	})
 func ValidationErr(errors ErrorMap) error {
-	return NewVerdantErrBuilder().
+	return NewGoFlexProErrBuilder().
 		WithCode(connect.CodeInvalidArgument).
 		WithMsg("Bad Request").
-		WithDetails(NewVerdantErrDetails(errors))
+		WithDetails(NewGoFlexProErrDetails(errors))
 }
 
 func InternalServerErr(err error) error {
-	return NewVerdantErrBuilder().
+	return NewGoFlexProErrBuilder().
 		WithCode(connect.CodeInternal).
 		WithMsg("Internal Server Error").
 		WithCause(err)
 }
 
 func UnauthorizedErr(err error) error {
-	return NewVerdantErrBuilder().
+	return NewGoFlexProErrBuilder().
 		WithCode(connect.CodeUnauthenticated).
 		WithMsg("Unauthorized").
 		WithCause(err)
 }
 
 func NotFoundErr(err error) error {
-	return NewVerdantErrBuilder().
+	return NewGoFlexProErrBuilder().
 		WithCode(connect.CodeNotFound).
 		WithMsg("Not Found").
 		WithCause(err)

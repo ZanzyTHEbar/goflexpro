@@ -8,30 +8,30 @@ import (
 	"connectrpc.com/connect"
 )
 
-type VerdantErrDetails struct {
+type GoFlexProErrDetails struct {
 	errors ErrorMap
 }
 
-type VerdantErrBuilder struct {
+type GoFlexProErrBuilder struct {
 	code    connect.Code
 	msg     string
 	cause   error
 	label   string
-	details VerdantErrDetails
+	details GoFlexProErrDetails
 }
 
-// NewVerdantErrDetails is a constructor for VerdantErrDetails
-func NewVerdantErrDetails(errors ErrorMap) VerdantErrDetails {
-	return VerdantErrDetails{errors: errors}
+// NewGoFlexProErrDetails is a constructor for GoFlexProErrDetails
+func NewGoFlexProErrDetails(errors ErrorMap) GoFlexProErrDetails {
+	return GoFlexProErrDetails{errors: errors}
 }
 
-// NewVerdantErrBuilder is a constructor for VerdantErrBuilder
-func NewVerdantErrBuilder() *VerdantErrBuilder {
-	return &VerdantErrBuilder{}
+// NewGoFlexProErrBuilder is a constructor for GoFlexProErrBuilder
+func NewGoFlexProErrBuilder() *GoFlexProErrBuilder {
+	return &GoFlexProErrBuilder{}
 }
 
 // MarshalJSON implements the json.Marshaler interface.
-func (builder *VerdantErrBuilder) MarshalJSON() ([]byte, error) {
+func (builder *GoFlexProErrBuilder) MarshalJSON() ([]byte, error) {
 	// use json.Marshal to convert the error message to a JSON byte slice
 	byteBuffer, err := json.Marshal(map[string]interface{}{
 		"code":    builder.code,
@@ -48,7 +48,7 @@ func (builder *VerdantErrBuilder) MarshalJSON() ([]byte, error) {
 }
 
 // Error is a method to return an error, this is an implementation of the error interface.
-func (builder *VerdantErrBuilder) Error() string {
+func (builder *GoFlexProErrBuilder) Error() string {
 
 	// validate the error instance, if it is nil, return nil
 	if builder.code == 0 || builder.msg == "" {
@@ -72,31 +72,31 @@ func (builder *VerdantErrBuilder) Error() string {
 }
 
 // WithCode is a method to set the error code.
-func (builder *VerdantErrBuilder) WithCode(code connect.Code) *VerdantErrBuilder {
+func (builder *GoFlexProErrBuilder) WithCode(code connect.Code) *GoFlexProErrBuilder {
 	builder.code = code
 	return builder
 }
 
 // WithMsg is a method to set the error message.
-func (builder *VerdantErrBuilder) WithMsg(msg string) *VerdantErrBuilder {
+func (builder *GoFlexProErrBuilder) WithMsg(msg string) *GoFlexProErrBuilder {
 	builder.msg = msg
 	return builder
 }
 
 // WithCause is a method to set the error cause.
-func (builder *VerdantErrBuilder) WithCause(cause error) *VerdantErrBuilder {
+func (builder *GoFlexProErrBuilder) WithCause(cause error) *GoFlexProErrBuilder {
 	builder.cause = cause
 	return builder
 }
 
 // WithDetails is a method to set the error details.
-func (builder *VerdantErrBuilder) WithDetails(details VerdantErrDetails) *VerdantErrBuilder {
+func (builder *GoFlexProErrBuilder) WithDetails(details GoFlexProErrDetails) *GoFlexProErrBuilder {
 	builder.details = details
 	return builder
 }
 
 // ErrDetails is a method to return the error details as a map.
-func (err *VerdantErrDetails) ErrDetails() (ErrorMap, error) {
+func (err *GoFlexProErrDetails) ErrDetails() (ErrorMap, error) {
 	if err.errors == nil {
 		return nil, errors.New("no error details found")
 	}
