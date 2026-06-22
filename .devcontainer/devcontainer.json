@@ -56,7 +56,7 @@
         }
     },
     "features": {
-        "ghcr.io/devcontainers/features/node:1": {
+        "ghcr.io/devcontainers/features/node:2": {
             "nodeGypDependencies": true,
             "version": "latest",
             "nvmVersion": "0.39"
